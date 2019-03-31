@@ -1,4 +1,4 @@
-# TT-Back
+# TT-Back end
 Back-end TT 2018-B039 SICAT
 
 
@@ -27,7 +27,7 @@ Herramientas de desarrollo
  http://localhost:8000/
  
  *Make migrations
- 
+ python manage.py migrate
  
  REST
 ////////////////////////////////////////////////////////////////////////////////////////////
