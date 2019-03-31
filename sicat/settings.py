@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+9o)%nurbpy)%f$yw#bz8my6&v0i@xqp3@g&4ewgpla+t76p%r'
+SECRET_KEY = '^m7wfqbb$jch#a4rrfb4f8jo-zyzma=7r6o^s^c2@8*4v&f@_1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,6 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'countries',
+    'transactions',
+    'kinds',
+    'months',
+    'years',
+    'chapters',
+    'shipments',
+    'subshipments',
+    'sections',
 ]
 
 MIDDLEWARE = [
@@ -72,13 +82,22 @@ WSGI_APPLICATION = 'sicat.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+"""
+DATABASES = {
+   'default': {
+      'ENGINE': 'djongo',
+      'NAME':'sicat',
+   }
+}
+
+
 
 
 # Password validation
@@ -105,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Mexico_City'
 
 USE_I18N = True
 
