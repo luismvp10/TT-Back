@@ -9,6 +9,9 @@ Development's tools
 
  Python 3.7.1
  
+ ***Install pip
+ python get-pip.py
+ 
  Django 
  
  Create project with :
