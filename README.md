@@ -2,7 +2,7 @@
 Back-end TT 2018-B039 SICAT
 
 
-Herramientas de desarrollo 
+Development's tools
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,8 +26,11 @@ Herramientas de desarrollo
  Now you can access in :
  http://localhost:8000/
  
+ ****Install mongoDb driver then insert the following sentences...
+ 
  *Make migrations
  python manage.py migrate
+ python manage.py createsuperuser
  
  REST
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +39,8 @@ Herramientas de desarrollo
 
 
  
- Mongo 
+ **Mongo Connector**
+ pip install djongo
  
  
  
