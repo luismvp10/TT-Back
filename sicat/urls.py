@@ -21,11 +21,10 @@ from . import views
 import countries, rest_framework
 
 urlpatterns = [
-    path(r'^admin/', admin.site.urls),
+    url(r'^$', views.hello_world),
+    path(r'admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('countries/', include('countries.urls')),
-
-    path(r'^$', views.hello_world()),
-    path('api-auth/', rest_framework.urls),
+    #path('api-auth/', rest_framework.urls),
    ## path('api-auth/', rest_framework.urls),
 ]
