@@ -26,11 +26,16 @@ SECRET_KEY = '^m7wfqbb$jch#a4rrfb4f8jo-zyzma=7r6o^s^c2@8*4v&f@_1'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST  = [
+     "localhost:4200",
+     "127.0.0.1:4200"
+]
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +55,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,7 +65,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+CORS_ALLOW_METHODS  = [
+     'DELETE',
+     'GET',
+     'OPTIONS',
+     'PATCH',
+     'POST',
+     'PUT',
+]
 ROOT_URLCONF = 'sicat.urls'
 
 TEMPLATES = [
