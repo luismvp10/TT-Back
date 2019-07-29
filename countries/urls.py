@@ -6,4 +6,5 @@ from . import views
 urlpatterns = [
     url(r'^countries$',views.CountrieList.as_view()),
     url(r'countrie/(?P<pk>[0-9]+)$', views.CountrieDetail.as_view()),
+    url(r'upload/',views.upload),
 ]
