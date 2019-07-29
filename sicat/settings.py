@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST  = [
+CORS_ORIGIN_WHITELIST = [
      "localhost:4200",
      "127.0.0.1:4200"
 ]
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'shipments',
     'subshipments',
     'sections',
+    'units'
 ]
 
 MIDDLEWARE = [
@@ -107,7 +108,7 @@ DATABASES = {
 DATABASES = {
    'default': {
       'ENGINE': 'djongo',
-      'NAME':'sicat',
+      'NAME': 'sicat',
    }
 }
 
