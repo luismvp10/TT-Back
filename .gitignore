@@ -1,3 +1,16 @@
 # Código gitignore para evitar procesar los directorios de las dependencias
 
 .idea/
+chapters/__pycache__
+countries/__pycache__
+kinds/__pycache__
+months/__pycache__
+sections/__pycache__
+shipments/__pycache__
+sicat/__pycache__
+subshipments/__pycache__
+transactions/__pycache__
+units/__pycache__
+years__pycache__
+de.sqlite3
+
