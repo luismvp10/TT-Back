@@ -3,16 +3,27 @@
 .idea/
 __pycache__/
 chapters/__pycache__/
+chapters/migrations/
 countries/__pycache__/
+countries/migrations/
 kinds/__pycache__/
+kinds/migrations/
 months/__pycache__/
+months/migrations/
 sections/__pycache__/
+sections/migrations/
 shipments/__pycache__/
+shipments/migrations/
 sicat/__pycache__/
+sicat/migrations/
 subshipments/__pycache__/
+subshipments/migrations/
 transactions/__pycache__/
+transactions/migrations/
 units/__pycache__/
-years__pycache__/
+units/migrations/
+years/__pycache__/
+years/migrations/
 de.sqlite3
 
 
