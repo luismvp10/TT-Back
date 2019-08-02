@@ -29,7 +29,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('countries/', include('countries.urls')),
     path('chapters/', include('chapters.urls')),
-    url(r'upload/', views.upload),
+
 
     #path(r'^$', views.hello_world(reque)),
 
