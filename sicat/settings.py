@@ -26,11 +26,11 @@ SECRET_KEY = '^m7wfqbb$jch#a4rrfb4f8jo-zyzma=7r6o^s^c2@8*4v&f@_1'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = [
-     "http://localhost:4200",
-     "http://127.0.0.1:4200"
-]
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = [
+#      "http://localhost:4200",
+#      "http://127.0.0.1:4200"
+# ]
 
 # Application definition
 

@@ -26,10 +26,13 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('countries/', include('countries.urls')),
     path('chapters/', include('chapters.urls')),
+    path('years/', include('years.urls')),
+    path('months/', include('months.urls')),
+    path('shipments/', include('shipments.urls')),
+    path('subshipments/', include('subshipments.urls')),
+    path('sections/', include('sections.urls')),
 
     #path(r'^$', views.hello_world(reque)),
-
-
-   ## path('api-auth/', rest_framework.urls),
+    #path('api-auth/', rest_framework.urls),
 
 ]
