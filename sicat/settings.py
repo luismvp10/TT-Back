@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import urllib
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -105,11 +106,20 @@ DATABASES = {
     }
 }
 """
+# DATABASES = {
+#    'default': {
+#       'ENGINE': 'djongo',
+#       'NAME': 'sicat',
+#    }
+# }
+
 DATABASES = {
-   'default': {
-      'ENGINE': 'djongo',
-      'NAME': 'sicat',
-   }
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'sicat',
+        'HOST': 'mongodb+srv://luismvp:' + urllib.parse.quote('Temporalb039') + '@cluster0-rzbmq.mongodb.net/test?retryWrites=true&w=majority',
+        'ENFORCE_SCHEMA': False
+    }
 }
 
 
