@@ -1,5 +1,5 @@
 from django.db import models
-from transactions.models import Transaction
+
 
 # Create your models here.
 

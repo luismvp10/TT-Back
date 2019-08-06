@@ -1,3 +1,6 @@
 from django.contrib import admin
+from kinds.models import Kind
 
-# Register your models here.
+
+
+admin.site.register(Kind)

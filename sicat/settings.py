@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import urllib
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,11 +27,11 @@ SECRET_KEY = '^m7wfqbb$jch#a4rrfb4f8jo-zyzma=7r6o^s^c2@8*4v&f@_1'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = [
-     "http://localhost:4200",
-     "http://127.0.0.1:4200"
-]
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = [
+#      "http://localhost:4200",
+#      "http://127.0.0.1:4200"
+# ]
 
 # Application definition
 
@@ -106,11 +107,20 @@ DATABASES = {
 }
 """
 DATABASES = {
-   'default': {
-      'ENGINE': 'djongo',
-      'NAME': 'sicat',
-   }
+    'default': {
+       'ENGINE': 'djongo',
+       'NAME': 'sicat',
+    }
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'djongo',
+#        'NAME': 'sicat',
+#        'HOST': 'mongodb+srv://luismvp:' + urllib.parse.quote('Temporalb039') + '@cluster0-rzbmq.mongodb.net/test?retryWrites=true&w=majority',
+#        'ENFORCE_SCHEMA': False
+#    }
+#}
 
 
 

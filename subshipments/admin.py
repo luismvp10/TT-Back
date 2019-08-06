@@ -1,3 +1,6 @@
 from django.contrib import admin
+from subshipments.models import Subshipment
 
-# Register your models here.
+
+
+admin.site.register(Subshipment)
