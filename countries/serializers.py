@@ -4,4 +4,4 @@ from countries.models import Countrie
 class CountrieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Countrie
-        fields=('id','name','iso2','iso3')
+        fields=('id_country','name','iso2','iso3')

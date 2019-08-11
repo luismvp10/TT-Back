@@ -10,4 +10,4 @@ class ShipmentList(generics.ListAPIView):
 
     def get_queryset(self):
         id = self.kwargs['pk']
-        return Shipment.objects.filter(id_chapter=id)
+        return Shipment.objects.filter(chapter_id=id)
