@@ -7,9 +7,9 @@ from chapters.models import Chapter
 # Create your models here.
 
 class Shipment(models.Model):
-    id_shipment= models.CharField(max_length=4, primary_key=True)
+    id_shipment = models.CharField(max_length=4, primary_key=True, null=False)
     name = models.CharField(max_length=250)
-    id_chapter =models.ForeignKey(Chapter, db_column='id_chapter', null=False, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(Chapter,  null=False, blank=False, on_delete=models.CASCADE)
 
 
 

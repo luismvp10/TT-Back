@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'shipments',
     'subshipments',
     'sections',
-    'units'
+    'units',
 ]
 
 MIDDLEWARE = [
