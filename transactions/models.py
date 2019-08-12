@@ -19,4 +19,4 @@ class Transaction(models.Model):
 
 
     def __str__(self):
-        return str("AGREGADO")
+        return str(self.id_transaction)
