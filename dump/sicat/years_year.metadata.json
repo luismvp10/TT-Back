@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"sicat.years_year"},{"v":2,"unique":true,"key":{"id_year":1},"name":"__primary_key__","ns":"sicat.years_year"}],"uuid":"81b125e0078b419d917ff6a39df89dbb"}

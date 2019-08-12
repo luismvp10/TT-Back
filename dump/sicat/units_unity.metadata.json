@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"sicat.units_unity"},{"v":2,"unique":true,"key":{"id_unity":1},"name":"__primary_key__","ns":"sicat.units_unity"}],"uuid":"b9b8412836a340c9935ccb45cf278692"}

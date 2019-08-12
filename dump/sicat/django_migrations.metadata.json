@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"sicat.django_migrations"},{"v":2,"unique":true,"key":{"id":1},"name":"__primary_key__","ns":"sicat.django_migrations"}],"uuid":"addb8dc2d8a343248d93013c7a3c29c5"}
