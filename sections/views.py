@@ -10,4 +10,4 @@ class SectionList(generics.ListAPIView):
 
     def get_queryset(self):
         id = self.kwargs['pk']
-        return Section.objects.filter(subShipment_id=id)
+        return Section.objects.filter(id_subShipment=id)

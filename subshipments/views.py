@@ -10,5 +10,5 @@ class SubshipmentList(generics.ListAPIView):
 
     def get_queryset(self):
         id = self.kwargs['pk']
-        return Subshipment.objects.filter(shipment_id=id)
+        return Subshipment.objects.filter(id_shipment=id)
 

@@ -4,4 +4,4 @@ from subshipments.models import Subshipment
 class SubshipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subshipment
-        fields=('id_subShipment','name')
+        fields=('id_subShipment', 'name')

@@ -5,11 +5,11 @@ from months.models import Month
 
 class Year(models.Model):
     id_year = models.IntegerField(primary_key=True, null=False)
-    name = models.CharField(max_length=45)
+    name = models.IntegerField(max_length=4)
 
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 
