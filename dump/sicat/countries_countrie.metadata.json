@@ -1,1 +1,1 @@
-{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"sicat.countries_countrie"},{"v":2,"unique":true,"key":{"id":1},"name":"__primary_key__","ns":"sicat.countries_countrie"}],"uuid":"6d0606c2fc2c43d2953b98f6eb93a5aa"}
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"sicat.countries_countrie"},{"v":2,"unique":true,"key":{"id_country":1},"name":"__primary_key__","ns":"sicat.countries_countrie"}],"uuid":"6dac193049f74ee282021c9f72307f89"}

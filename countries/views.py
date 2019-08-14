@@ -25,42 +25,92 @@ def upload(request):
         if request.FILES.getlist('document'):
             for f in request.FILES.getlist('document'):
                 data=str(f.read())
-                data=re.sub(r'<tr bgcolor=.*?</tr>|<font.*?>|<strong>|</strong>|<font>|<div.*?>|</div>|<tbody>|</tbody>', '', data)
-                data=re.sub(r'<table.*?>', '<table>', data)
-                data=re.sub(r'<th.*?>', '<td>', data)
-                data=re.sub(r'<tr.*?>', '<tr>', data)
-                data=re.sub(r'<td.*?>', '<td>', data)
-                data=re.sub(r'</th>', '</td>', data)
-                data=re.sub(r'Rep.*?ca', 'Republica', data)
-                data=re.sub(r'Esp.*?1a', 'Espana', data)
-                data=re.sub(r'Bre.*?1a', 'Bretana', data)
-                data=re.sub(r'Federac.*?n', 'Federacion', data)
-                name = f.name
-                name = name[len(name)-12:len(name)-4]
-                soup = BeautifulSoup(data,'lxml')
+                section = f.name.split("-")[2].split(".")[0]
+                year = f.name.split("-")[1]
+                soup = BeautifulSoup(clean(data),'lxml')
                 tables = soup.findAll('table')
-                price = pd.read_html(str(tables[2]))[0]
-                weight = pd.read_html(str(tables[4]))[0]
-                months=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
-                if price.size > 13:
-                    for cont in range(price.shape[0]-1):
-                        for cont2  in range(price.shape[1]-1):
-                            k = Kind(id_kind=0,name="Exportaciones")
-                            c = Countrie(id_country=484,name="México",iso2="MX",iso3="MEX")
-                            ch = Chapter(id_chapter=int(name[0:2]),name="Niquel y manufacturas de niquel")
-                            sh = Shipment(id_shipment=int(name[0:4]),name="Las demás manufacturas de níquel",chapter=ch)
-                            ss = Subshipment(id_subShipment=int(name[0:6]),name="Las demás",shipment=sh)
-                            s = Section(id_section=int(name),name="Las demás",subShipment=ss,id_unity=Unity(id_unity=0,name="kg"))
-                            y = Year(id_year=2018,name="2018")
-                            m = Month(id_month=cont2,name=months[cont2])
-                            nt = Transaction(id_transaction=cont2,price=int(price.iloc[cont+1,cont2+1]),weight=int(weight.iloc[cont+1,cont2+1]),kind=k,country=c,section=s,year=y,month=m)
-                            print(nt)
-                            nt.save()
-                            #print(price.iloc[cont+1,cont2+1])
-                    return JsonResponse(price.to_json(orient="values"), safe=False)
-                #print(f.name)
-                #print(df.to_json(orient="values"))
+                price_export = pd.read_html(str(tables[2]))[0]
+                weight_export = pd.read_html(str(tables[4]))[0]
+                price_import = pd.read_html(str(tables[6]))[0]
+                weight_import = pd.read_html(str(tables[8]))[0]
+                y = Year.objects.get(name=year)
+                try:
+                    s = Section.objects.get(id_section=int(section))
+                except Section.DoesNotExist:
+                    print(section+" doesn't exist")
+                transactions=[]
+                try:
+                    last_id = Transaction.objects.latest('id_transaction').id_transaction+1
+                except Transaction.DoesNotExist:
+                    last_id=1
+                if price_export.size > 13:
+                    cont=cont2=0
+                    k = Kind(id_kind=2,name="Exportaciones")
+                    for cont in range(price_export.shape[0]-1):
+                        try:
+                            c = Countrie.objects.get(name=price_export.iloc[cont+1,0])
+                            error=1
+                        except Countrie.DoesNotExist:
+                            print(price_export.iloc[cont+1,0]+" doesn't exist")
+                            error=0
+                        for cont2 in range(price_export.shape[1]-1):
+                            m = Month.objects.get(id_month=cont2+1)
+                            if error:
+                                nt = Transaction(id_transaction=last_id,price=int(price_export.iloc[cont+1,cont2+1]),weight=int(weight_export.iloc[cont+1,cont2+1]),kind=k,country=c,section=s,year=y,month=m)
+                                transactions.append(nt)
+                                last_id=last_id+1
+                if price_import.size > 13:
+                    cont=cont2=0
+                    k = Kind(id_kind=1,name="Importaciones")
+                    for cont in range(price_import.shape[0]-1):
+                        try:
+                            c = Countrie.objects.get(name=price_import.iloc[cont+1,0])
+                            error=1
+                        except Countrie.DoesNotExist:
+                            print(price_import.iloc[cont+1,0]+" doesn't exist")
+                            error=0
+                        for cont2 in range(price_import.shape[1]-1):
+                            m = Month.objects.get(id_month=cont2+1)
+                            if error:
+                                nt = Transaction(id_transaction=last_id,price=int(price_import.iloc[cont+1,cont2+1]),weight=int(weight_import.iloc[cont+1,cont2+1]),kind=k,country=c,section=s,year=y,month=m)
+                                transactions.append(nt)
+                                last_id=last_id+1
+                if(len(transactions)):
+                    bt = Transaction.objects.bulk_create(transactions)
     return render(request,'countries/upload.html')
+
+def clean(data):
+    data=re.sub(r'<tr bgcolor=.*?</tr>|<font.*?>|<strong>|</strong>|<font>|<div.*?>|</div>|<tbody>|</tbody>|Rep.*?ca|,', '', data)
+    data=re.sub(r'\( de \)|\( de\)|\( Federal de\)|\(Reino de Los\)|\( Popular de\)|\(Comunidad Australiana\)|\(Reino de\)|\( Federativa del\)|de la Gran Bret.*?1a e Irlanda d|antes U\.R\.S\.S\.|\( de la\)|\( del\)|\(Estado de\)|\(Fed.*?n de\)|\(Teritorio de \)','',data)
+    data=re.sub(r'\(Taipe chino\)|\( Socialista de\)|\(gran Ducado\)|\(gran Ducado\)|\( Islamica del\)|\(sultanato de\)|\( Arabe de\)|\( Dem.*?ca de\)|\( Islamica de\)', '', data)
+    data=re.sub(r'<table.*?>', '<table>', data)
+    data=re.sub(r'<th.*?>', '<td>', data)
+    data=re.sub(r'<tr.*?>', '<tr>', data)
+    data=re.sub(r'<td.*?>', '<td>', data)
+    data=re.sub(r'</th>', '</td>', data)
+    data=re.sub(r'Espa.*?1a', 'España', data)
+    data=re.sub(r'Canada', 'Canadá', data)
+    data=re.sub(r'Japon', 'Japón', data)
+    data=re.sub(r'Belgica', 'Bélgica', data)
+    data=re.sub(r'Sudafrica', 'Sudáfrica', data)
+    data=re.sub(r'Turquia', 'Turquía', data)
+    data=re.sub(r'Pakistan', 'Pakistán', data)
+    data=re.sub(r'Peru', 'Perú', data)
+    data=re.sub(r'Checa', 'República Checa', data)
+    data=re.sub(r'Taiwan', 'Taiwán', data)
+    data=re.sub(r'Paises Bajos', 'Países Bajos', data)
+    data=re.sub(r'Panama', 'Panamá', data)
+    data=re.sub(r'Oman', 'Omán', data)
+    data=re.sub(r'Iran', 'Irán', data)
+    data=re.sub(r'Arabes', 'Árabes', data)
+    data=re.sub(r'Hungria', 'Hungría', data)
+    data=re.sub(r'Libano', 'Líbano', data)
+    data=re.sub(r'Nueva Zelandia', 'Nueva Zelanda', data)
+    data=re.sub(r'Dominicana', 'República Dominicana', data)
+    data=re.sub(r'Qatar', 'Catar', data)
+    data=re.sub(r'Swazilandia', 'Suazilandia', data)
+    data=re.sub(r'Eslovaca', 'Eslovaquia', data)
+    return data
 
 class CountrieList(generics.ListAPIView):
     queryset = Countrie.objects.all();
