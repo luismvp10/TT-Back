@@ -128,6 +128,8 @@ def clean(data):
     data=re.sub(r'Eslovaca', 'Eslovaquia', data)
     return data
 
+
+@permission_classes((AllowAny,))
 class CountrieList(generics.ListAPIView):
     queryset = Countrie.objects.all();
     serializer_class = CountrieSerializer

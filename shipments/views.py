@@ -3,7 +3,10 @@ from rest_framework import generics
 from rest_framework import generics
 from shipments.models import Shipment
 from shipments.serializers import ShipmentSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 
+@permission_classes((AllowAny,))
 # Create your views here.
 class ShipmentList(generics.ListAPIView):
     serializer_class = ShipmentSerializer

@@ -5,7 +5,7 @@ from months.models import Month
 
 class Year(models.Model):
     id_year = models.IntegerField(primary_key=True, null=False)
-    name = models.IntegerField(max_length=4)
+    name = models.CharField(max_length=4)
 
 
     def __str__(self):
