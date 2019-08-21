@@ -30,7 +30,8 @@ urlpatterns = [
     path('shipments/', include('shipments.urls')),
     path('subshipments/', include('subshipments.urls')),
     path('sections/', include('sections.urls')),
-
+    path('users/', include('users.urls')),
+    path('transactions/',include('transactions.urls')),
     #path(r'^$', views.hello_world(reque)),
     #path('api-auth/', rest_framework.urls),
 
