@@ -123,15 +123,15 @@ DATABASES = {
     }
 }
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'djongo',
-#        'NAME': 'sicat',
-#        'HOST': 'mongodb+srv://luismvp:' + urllib.parse.quote('Temporalb039') + '@cluster0-rzbmq.mongodb.net/test?retryWrites=true&w=majority',
-#        'ENFORCE_SCHEMA': False
-#    }
-#}
-
+"""DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'sicat',
+        'HOST': 'mongodb+srv://luismvp:' + urllib.parse.quote('Temporalb039') + '@cluster0-rzbmq.mongodb.net/test?retryWrites=true&w=majority',
+        'ENFORCE_SCHEMA': False
+    }
+}
+"""
 
 
 
