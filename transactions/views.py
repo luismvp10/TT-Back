@@ -1,27 +1,47 @@
-from django.shortcuts import render
-from rest_framework import generics
+from django.http import HttpResponse
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
-
 from transactions.models import Transaction
-from transactions.serializers import TransactionSerializer
+import json
 
 
-# Create your views here.
 @permission_classes((AllowAny,))
-class TransactionList(generics.ListAPIView):
-    serializer_class = TransactionSerializer
+def getTransaction(request, section, country, month, year):
+    if month is None and country is None:
+        query = Transaction.objects.filter(section=section, year=year)
+        return HttpResponse(
+            groupquery(query), content_type="application/json"
+        )
+    if month is None and country is not None:
+        query = Transaction.objects.filter(section=section, year=year, country=country)
+        return HttpResponse(
+            groupquery(query), content_type="application/json"
+        )
+    if country is None and month is not None:
+        query = Transaction.objects.filter(section=section, year=year, month=month)
+        return HttpResponse(
+            groupquery(query), content_type="application/json"
+        )
+    else:
+        query = Transaction.objects.filter(section=section, year=year, month=month, country=country)
+        return HttpResponse(
+            groupquery(query), content_type="application/json"
+        )
 
-    def get_queryset(self):
-        section = self.kwargs['section']
-        country = self.kwargs['country']
-        month = self.kwargs['month']
-        year = self.kwargs['year']
-        if month is None and country is None:
-            return Transaction.objects.filter(section=section, year=year).select_related('year')
-        if month is None and country is not None:
-            return Transaction.objects.filter(section=section, year=year, country=country)
-        if country is None and month is not None:
-            return Transaction.objects.filter(section=section, year=year, month=month)
+
+def groupquery(query):
+    result = {}
+    for t in query:
+        if t.country.name not in result:
+            result[t.country.name] = {
+                't' + str(t.id_transaction): {'id_transaction': t.id_transaction, 'price': t.price,
+                                              'weight': t.weight, 'kind': t.kind.id_kind,
+                                              'section': t.section.name, 'year': t.year.name,
+                                              'month': t.month.name}}
         else:
-            return Transaction.objects.filter(section=section, year=year, month=month, country=country)
+            result[t.country.name]['t' + str(t.id_transaction)] = {'id_transaction': t.id_transaction,
+                                                                   'price': t.price,
+                                                                   'weight': t.weight, 'kind': t.kind.id_kind,
+                                                                   'section': t.section.name,
+                                                                   'year': t.year.name, 'month': t.month.name}
+    return json.dumps(result, indent=4, ensure_ascii=False)
