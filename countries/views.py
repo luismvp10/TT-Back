@@ -32,7 +32,7 @@ def upload(request):
             weight_export = pd.read_html(str(tables[4]))[0]
             price_import = pd.read_html(str(tables[6]))[0]
             weight_import = pd.read_html(str(tables[8]))[0]
-            # Transaction.objects.all().delete()
+            #Transaction.objects.all().delete()
             y = Year.objects.get(name=year)
             try:
                 s = Section.objects.get(id_section=int(section))
