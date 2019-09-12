@@ -15,10 +15,11 @@ class TransactionList(generics.ListAPIView):
         country = self.kwargs['country']
         month = self.kwargs['month']
         year = self.kwargs['year']
-        data = month.split()  # split string into a list
-        months = []
-        for temp in data:
-            months.append(temp)
+        if month is not None:
+            data = month.split()
+            months = []
+            for temp in data:
+                months.append(temp)
         if month is None and country is None:
             query = Transaction.objects.filter(section=section, year=year).values('country').annotate(Count('country'))
             return groupquery(query,section,year)
