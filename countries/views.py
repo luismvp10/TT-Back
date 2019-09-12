@@ -136,11 +136,13 @@ def clean(data):
     return data
 
 
+@permission_classes((AllowAny,))
 class CountrieList(generics.ListAPIView):
     queryset = Countrie.objects.all();
     serializer_class = CountrieSerializer
 
 
+@permission_classes((AllowAny,))
 class CountrieDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Countrie.objects.all();
     serializer_class = CountrieSerializer
