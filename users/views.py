@@ -24,10 +24,12 @@ def login(request):
                         status=HTTP_400_BAD_REQUEST)
     user = authenticate(username=username, password=password)
     if not user:
-        return Response({'error': 'Invalid Credentials'},
+        return Response({'error': 'El correo o contraseña son incorrectos'},
                         status=HTTP_404_NOT_FOUND)
     token, _ = Token.objects.get_or_create(user=user)
-    return Response({'token': token.key},
+    return Response({'token': token.key,
+                     'userType': user.user_type,
+                     'name': user.names + ' ' + user.surname},
                     status=HTTP_200_OK)
 
 
@@ -42,10 +44,15 @@ def register(request):
     if email is None or password is None:
         return Response({'error': 'Please provide both email and password'},
                         status=HTTP_400_BAD_REQUEST)
-    user = User.objects.create_user(email, names, surname, password)
-    token, _ = Token.objects.get_or_create(user=user)
-    return Response({'token': token.key},
-                    status=HTTP_200_OK)
+    try:
+        user = User.objects.get(email=email)
+        return Response({'error': 'User already exist'},
+                        status=HTTP_400_BAD_REQUEST)
+    except User.DoesNotExist:
+        user = User.objects.create_user(email, names, surname, password)
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key},
+                        status=HTTP_200_OK)
 
 
 @csrf_exempt
@@ -61,3 +68,16 @@ def delete(request):
     except User.DoesNotExist:
         return Response({'error': 'The user does not exist'},
                         status=HTTP_404_NOT_FOUND)
+
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes((AllowAny,))
+def validateToken(request):
+    try:
+        token = request.data.get("token")
+        t = Token.objects.get(key=token);
+        return Response({'error': True},
+                        status=HTTP_200_OK)
+    except Token.DoesNotExist:
+        return Response({'error': False},
+                        status=HTTP_200_OK)
