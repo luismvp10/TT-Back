@@ -32,7 +32,10 @@ urlpatterns = [
     path('sections/', include('sections.urls')),
     path('users/', include('users.urls')),
     path('transactions/',include('transactions.urls')),
-    #path(r'^$', views.hello_world(reque)),
+    path(r'regresion_lineal/', views.regresion_lineal),
+    path(r'regresion_polinomial/', views.regresion_polinomial),
+    path(r'SVR/', views.svr),
+    path(r'arboles_desicion/', views.arboles_decision),
     #path('api-auth/', rest_framework.urls),
 
 ]
