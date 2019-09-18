@@ -3,10 +3,10 @@ from rest_framework import generics
 from rest_framework import generics
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
-
 from sections.models import Section
 from sections.serializers import SectionSerializer
 
+@permission_classes((AllowAny,))
 class SectionList(generics.ListAPIView):
     serializer_class = SectionSerializer
 
