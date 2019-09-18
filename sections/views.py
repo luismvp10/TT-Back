@@ -7,12 +7,9 @@ from rest_framework.permissions import AllowAny
 from sections.models import Section
 from sections.serializers import SectionSerializer
 
-
-@permission_classes((AllowAny,))
 class SectionList(generics.ListAPIView):
     serializer_class = SectionSerializer
 
     def get_queryset(self):
         id = self.kwargs['pk']
         return Section.objects.filter(subShipment_id=id)
-

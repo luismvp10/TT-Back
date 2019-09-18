@@ -5,4 +5,5 @@ urlpatterns = [
     url(r'login/', views.login),
     url(r'register/', views.register),
     url(r'delete/', views.delete),
+    url(r'validate/', views.validateToken),
 ]

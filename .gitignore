@@ -25,7 +25,7 @@ units/migrations/
 years/__pycache__/
 years/migrations/
 de.sqlite3
-
+.vscode/
 
 # mypy
 .mypy_cache/
