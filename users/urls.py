@@ -6,4 +6,5 @@ urlpatterns = [
     url(r'register/', views.register),
     url(r'delete/', views.delete),
     url(r'validate/', views.validateToken),
+    url(r'user/', views.UserList.as_view())
 ]
