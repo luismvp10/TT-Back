@@ -7,32 +7,47 @@ from sklearn.metrics import mean_squared_error
 from transactions.models import Transaction
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
+plt.style.use('seaborn')
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import PolynomialFeatures as Polinomizar
 from sklearn.svm import SVR
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.tree import DecisionTreeRegressor as Arbol
+from sklearn.neural_network import MLPRegressor
+from statsmodels.tsa.ar_model import AR
+from datetime import datetime
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
 
 def regresion_lineal(request):
-    t = Transaction.objects.filter(section__id_section__contains='75089099', year__id_year__range=(14,16), kind=1, country=60).values_list('month', 'year').annotate(
+    t = Transaction.objects.filter(section__id_section__contains='75052101', year__id_year__range=(12,16), kind=2, country=60).values_list('month', 'year').annotate(
                 price=Sum('price'),
                 weight=Sum(
                     'weight')).order_by('kind','year', 'month')
     df = pd.DataFrame(list(t), columns=['month', 'year', 'price', 'weight'])
-    df = df.replace([14,15,16], [2016,2017,2018])
-    df['index1'] = df.index+1
-    X = df.iloc[0:36].index1
-    y = df.iloc[0:36].weight
+    df.year = df.year.replace([12,13,14,15,16], [2014,2015,2016,2017,2018])
+    X = df.index
+    y = df.weight
+    df['Date'] = pd.to_datetime([f'{y}-{m}-01' for y, m in zip(df.year, df.month)])
+    df.set_index('Date', inplace=True)
     regressor = LinearRegression()
     regressor.fit(X.values.reshape(-1, 1), y)
     prediccion_entrenamiento = regressor.predict(X.values.reshape(-1, 1))
-    newyear = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
-    y_test = regressor.predict(np.array(newyear).reshape(-1, 1))
+    ny = []
+    for i in range(1,7):
+        ny.append(len(df.price)+i)
+    y_test = regressor.predict(np.array(ny).reshape(-1, 1))
+    print(regressor.score(X.values.reshape(-1, 1),y))
     matplotlib.use('Agg')
-    plt.scatter(X, y, color='red')
-    plt.plot(X, prediccion_entrenamiento, color='blue')
-    plt.scatter(newyear, y_test, color='#2DAB20')
+    predictDate = []
+    for i in range(6):
+        if(i==0):
+            predictDate.append(addMonth(df.last_valid_index()))
+        else:
+            predictDate.append(addMonth(predictDate[i-1]))
+    plt.plot(df.price, marker='o', markerfacecolor='blue', color='skyblue', linewidth=3)
+    plt.plot(df.index, prediccion_entrenamiento, color='blue')
+    plt.plot(predictDate, y_test, marker='o', color='#2DAB20')
     plt.title('Regresion lineal')
     plt.xlabel('Años')
     plt.ylabel('Valor en dolares')
@@ -48,28 +63,37 @@ def regresion_lineal(request):
         return response
 
 def regresion_polinomial(request):
-    t = Transaction.objects.filter(section__id_section__contains='75089099', year__id_year__range=(14,16), kind=1, country=60).values_list('month', 'year').annotate(
+    t = Transaction.objects.filter(section__id_section__contains='7508', year__id_year__range=(12,16), kind=2, country=60).values_list('month', 'year').annotate(
                 price=Sum('price'),
                 weight=Sum(
                     'weight')).order_by('kind','year', 'month')
     df = pd.DataFrame(list(t), columns=['month', 'year', 'price', 'weight'])
-    df = df.replace([14,15,16], [2016,2017,2018])
-    df['index1'] = df.index+1
-    X = df.iloc[0:36].index1
-    y = df.iloc[0:36].weight
-    polinomizador = Polinomizar(degree=3)
+    df.year = df.year.replace([12,13,14,15,16], [2014,2015,2016,2017,2018])
+    X = df.index
+    y = df.price
+    df['Date'] = pd.to_datetime([f'{y}-{m}-01' for y, m in zip(df.year, df.month)])
+    df.set_index('Date', inplace=True)
+    polinomizador = Polinomizar(degree=4)
     X = polinomizador.fit_transform(X.values.reshape(-1, 1))
-    newyear = [37,38,39,40,41,42,43,44,45,46,47,48]
-    x_test =  polinomizador.fit_transform(np.array(newyear).reshape(-1, 1))
+    ny = []
+    for i in range(1,7):
+        ny.append(len(df.price)+i)
+    x_test =  polinomizador.fit_transform(np.array(ny).reshape(-1, 1))
     regressor = LinearRegression()
     regressor.fit(X, y)
     y_fit = regressor.predict(X)
     y_test = regressor.predict(x_test)
-    x = df.iloc[0:36].index1
+    print(regressor.score(X,y))
     matplotlib.use('Agg')
-    plt.scatter(x, y, color='red')
-    plt.plot(x, y_fit, color='blue')
-    plt.scatter(newyear, y_test, color='#2DAB20')
+    predictDate = []
+    for i in range(6):
+        if(i==0):
+            predictDate.append(addMonth(df.last_valid_index()))
+        else:
+            predictDate.append(addMonth(predictDate[i-1]))
+    plt.plot(df.price, marker='o', markerfacecolor='blue', color='skyblue', linewidth=3)
+    plt.plot(df.index, y_fit, color='blue')
+    plt.plot(predictDate, y_test, marker='o', color='#2DAB20')
     plt.title('Regresión Polinómica')
     plt.xlabel('Años')
     plt.ylabel('Valor en dolares')
@@ -85,15 +109,16 @@ def regresion_polinomial(request):
         return response
 
 def svr(request):
-    t = Transaction.objects.filter(section__id_section__contains='75089099', year__id_year__range=(14,16), kind=1, country=60).values_list('month', 'year').annotate(
+    t = Transaction.objects.filter(section__id_section__contains='75052101', year__id_year__range=(12,16), kind=2, country=60).values_list('month', 'year').annotate(
                 price=Sum('price'),
                 weight=Sum(
                     'weight')).order_by('kind','year', 'month')
     df = pd.DataFrame(list(t), columns=['month', 'year', 'price', 'weight'])
-    df = df.replace([14,15,16], [2016,2017,2018])
-    df['index1'] = df.index+1
-    X = df.iloc[0:36].index1
-    y = df.iloc[0:36].weight
+    df.year = df.year.replace([12,13,14,15,16], [2014,2015,2016,2017,2018])
+    X = df.index
+    y = df.price
+    df['Date'] = pd.to_datetime([f'{y}-{m}-01' for y, m in zip(df.year, df.month)])
+    df.set_index('Date', inplace=True)
     escaladorX = MinMaxScaler(feature_range=(0, 1))
     escaladorY = MinMaxScaler(feature_range=(0, 1))
     esc_X = escaladorX.fit_transform(X.values.reshape(-1,1))
@@ -101,18 +126,27 @@ def svr(request):
     regresor_svr = SVR(kernel='rbf')
     regresor_svr.fit(esc_X, esc_y)
     y_fit = regresor_svr.predict(esc_X)
-    newyear = [37,38,39,40,41,42,43,44,45,46,47,48]
-    test_pred = escaladorX.transform((np.array(newyear).reshape(-1, 1)))
+    ny = []
+    for i in range(1,7):
+        ny.append(len(df.price)+i)
+    test_pred = escaladorX.transform((np.array(ny).reshape(-1, 1)))
     y_test = regresor_svr.predict(test_pred)
+    print(regresor_svr.score(esc_X,esc_y))
     y_test = escaladorY.inverse_transform(y_test.reshape(-1, 1))
     x_pred = escaladorX.transform(np.array([[37]]))
     y_pred = regresor_svr.predict(x_pred)
     y_fit = escaladorY.inverse_transform(y_fit.reshape(-1, 1))
     y_pred = escaladorY.inverse_transform(y_pred.reshape(-1, 1))
+    predictDate = []
+    for i in range(6):
+        if(i==0):
+            predictDate.append(addMonth(df.last_valid_index()))
+        else:
+            predictDate.append(addMonth(predictDate[i-1]))
     matplotlib.use('Agg')
-    plt.scatter(X, y, color='red')
-    plt.plot(X, y_fit, color='blue')
-    plt.scatter(newyear, y_test, color='#2DAB20')
+    plt.plot(df.price, marker='o', markerfacecolor='blue', color='skyblue', linewidth=3)
+    plt.plot(df.index, y_fit, color='blue')
+    plt.plot(predictDate, y_test,marker='o', color='#2DAB20')
     plt.title('SVR')
     plt.xlabel('Años')
     plt.ylabel('Valor en dolares')
@@ -128,26 +162,20 @@ def svr(request):
         return response
 
 def arboles_decision(request):
-    t = Transaction.objects.filter(section__id_section__contains='75089099', year__id_year__range=(14,16), kind=1, country=60).values_list('month', 'year').annotate(
+    t = Transaction.objects.filter(section__id_section__contains='75052101', year__id_year__range=(12,16), kind=2, country=60).values_list('month', 'year').annotate(
                 price=Sum('price'),
                 weight=Sum(
                     'weight')).order_by('kind','year', 'month')
     df = pd.DataFrame(list(t), columns=['month', 'year', 'price', 'weight'])
-    df = df.replace([14,15,16], [2016,2017,2018])
+    df.year = df.year.replace([12,13,14,15,16], [2014,2015,2016,2017,2018])
+    print(df.head())
+    df['Date'] = pd.to_datetime([f'{y}-{m}-01' for y, m in zip(df.year, df.month)])
     df['index1'] = df.index+1
-    X = df.iloc[0:36].index1
-    y = df.iloc[0:36].weight
-    arbol = Arbol(criterion='mse')
-    arbol.fit(X.values.reshape(-1,1), y)
-    y_fit = arbol.predict(X.values.reshape(-1,1))
-    x_pred = (np.array([[37]]))
-    y_pred = arbol.predict(x_pred)
-    X_grid = np.arange(min(X), max(X), 0.001)
-    y_grid = arbol.predict(X_grid.reshape(-1, 1))
+    x = df.iloc[:].index
+    y = df.price
+    df.set_index('Date', inplace=True)
     matplotlib.use('Agg')
-    plt.scatter(X, y, color='red')
-    plt.plot(X_grid, y_grid, color='blue')
-    plt.scatter(37, y_pred, color='#2DAB20')
+    plt.plot(df.price, color='blue',linestyle='-', marker='o')
     plt.title('Arboles de decision')
     plt.xlabel('Años')
     plt.ylabel('Valor en dolares')
@@ -161,3 +189,10 @@ def arboles_decision(request):
         response = HttpResponse(content_type="image/jpeg")
         red.save(response, "JPEG")
         return response
+
+def addMonth(date):
+    year, month= divmod(date.month+1, 12)
+    if month == 0:
+      month = 12
+      year = year -1
+    return datetime(date.year + year, month, 1)
