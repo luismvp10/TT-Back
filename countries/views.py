@@ -14,12 +14,18 @@ from years.models import Year
 from months.models import Month
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_404_NOT_FOUND,
+    HTTP_200_OK
+)
+from rest_framework.response import Response
 
 
 # Create your views here.
 @csrf_exempt
-# @api_view(["POST"])
-@permission_classes((AllowAny,))
+@api_view(["POST"])
+#@permission_classes((AllowAny,))
 def upload(request):
     if request.method == 'POST' and request.FILES.getlist('document'):
         for f in request.FILES.getlist('document'):
@@ -53,7 +59,11 @@ def upload(request):
                         print(price_export.iloc[cont + 1, 0] + " doesn't exist")
                         error = 0
                     for cont2 in range(price_export.shape[1] - 1):
-                        m = Month.objects.get(id_month=cont2 + 1)
+                        try:
+                            m = Month.objects.get(id_month=cont2 + 1)
+                        except Month.DoesNotExist:
+                            print(cont2 + 1)
+                            error = 0
                         if error:
                             try:
                                 nt = Transaction.objects.get(price=int(price_export.iloc[cont + 1, cont2 + 1]),
@@ -77,7 +87,11 @@ def upload(request):
                         print(price_import.iloc[cont + 1, 0] + " doesn't exist")
                         error = 0
                     for cont2 in range(price_import.shape[1] - 1):
-                        m = Month.objects.get(id_month=cont2 + 1)
+                        try:
+                            m = Month.objects.get(id_month=cont2 + 1)
+                        except Month.DoesNotExist:
+                            print(cont2 + 1)
+                            error = 0
                         if error:
                             try:
                                 nt = Transaction.objects.get(price=int(price_import.iloc[cont + 1, cont2 + 1]),
@@ -93,7 +107,13 @@ def upload(request):
                                 last_id = last_id + 1
             if len(transactions):
                 bt = Transaction.objects.bulk_create(transactions)
-    return render(request, 'countries/upload.html')
+                return Response({'status': 'El archivo se guardo correctamente'},
+                    status=HTTP_200_OK)
+            else:
+                return Response({'status': 'El archivo ya existe o se encuentra vacio'},
+                    status=HTTP_200_OK)
+    return Response({'status': 'Error'},
+                    status=HTTP_400_BAD_REQUEST)
 
 
 def clean(data):
