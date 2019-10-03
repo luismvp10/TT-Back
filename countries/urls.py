@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^countries', views.CountrieList.as_view()),
     url(r'countrie/(?P<pk>[0-9]+)$', views.CountrieDetail.as_view()),
     url(r'upload/', views.upload),
+    url(r'country/(?P<operation>\d+)((?:/year/(?P<year>\d+))?)$', views.CountrieOperation.as_view()),
 ]
