@@ -1,7 +1,6 @@
-from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
-
+from django.db.models import Count, Sum
 from countries.serializers import CountrieSerializer
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -16,10 +15,10 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
     HTTP_200_OK
 )
 from rest_framework.response import Response
+from transactions.models import Transaction
 
 
 # Create your views here.
@@ -30,19 +29,29 @@ def upload(request):
     if request.method == 'POST' and request.FILES.getlist('document'):
         for f in request.FILES.getlist('document'):
             data = str(f.read())
-            section = f.name.split("-")[2].split(".")[0]
+            try:
+                section = f.name.split("-")[2].split(".")[0]
+            except IndexError:
+                return Response({'status': 'El archivo no cuenta con el formato correcto'},
+                                status=HTTP_200_OK)
             year = f.name.split("-")[1]
             soup = BeautifulSoup(clean(data), "lxml")
             tables = soup.findAll('table')
-            price_export = pd.read_html(str(tables[2]))[0]
-            weight_export = pd.read_html(str(tables[4]))[0]
-            price_import = pd.read_html(str(tables[6]))[0]
-            weight_import = pd.read_html(str(tables[8]))[0]
+            try:
+                price_export = pd.read_html(str(tables[2]))[0]
+                weight_export = pd.read_html(str(tables[4]))[0]
+                price_import = pd.read_html(str(tables[6]))[0]
+                weight_import = pd.read_html(str(tables[8]))[0]
+            except IndexError:
+                return Response({'status': 'El archivo no cuenta con el formato correcto'},
+                                status=HTTP_200_OK)
             #Transaction.objects.all().delete()
             y = Year.objects.get(name=year)
             try:
                 s = Section.objects.get(id_section=int(section))
             except Section.DoesNotExist:
+                return Response({'status': 'El archivo no cuenta con el formato correcto'},
+                                status=HTTP_200_OK)
                 print(section + " doesn't exist")
             transactions = []
             try:
@@ -166,3 +175,20 @@ class CountrieList(generics.ListAPIView):
 class CountrieDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Countrie.objects.all();
     serializer_class = CountrieSerializer
+
+@permission_classes((AllowAny,))
+class CountrieOperation(generics.ListAPIView):
+    serializer_class = CountrieSerializer
+
+    def get_queryset(self):
+        operation = self.kwargs['operation']
+        year = self.kwargs['year']
+        if year is None:
+            query = Transaction.objects.filter(section__id_section__contains=operation).values('country').annotate(Count('country')).order_by('country')
+        else: 
+            query = Transaction.objects.filter(section__id_section__contains=operation, year = year).values('country').annotate(Count('country')).order_by('country')
+        result = []
+        for x in query:
+            c = Countrie.objects.get(id_country=x['country'])
+            result.append(c)
+        return result
