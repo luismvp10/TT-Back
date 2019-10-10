@@ -23,4 +23,7 @@ urlpatterns = [
     url(
         r'transaction((?:/month/(?P<month>[\d+\s+]+))?)$',
         views.hello_world),
+    url(
+        r'prediction/operation/(?P<operation>\d+)((?:/country/(?P<country>\d+))?)/kind/(?P<kind>\d)$',
+        views.prediction)
 ]
