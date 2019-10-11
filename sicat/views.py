@@ -98,7 +98,7 @@ def regresion_polinomial(request):
             predictDate.append(addMonth(df.last_valid_index()))
         else:
             predictDate.append(addMonth(predictDate[i - 1]))
-    _2019 = [225360, 422514, 347499, 354516, 277770, 369524]
+    _2019 = [7675838, 8426294, 5709494,	6746708, 7087399, 6204253 ]
     print(df.price.mean())
     plt.plot(df.price, marker='o', markerfacecolor='blue', color='skyblue', linewidth=3)
     plt.plot(df.index, y_fit, color='blue')
@@ -120,8 +120,8 @@ def regresion_polinomial(request):
 
 
 def svr(request):
-    t = Transaction.objects.filter(section__id_section__contains='75052101', year__id_year__range=(12, 16), kind=2,
-                                   country=60).values_list('month', 'year').annotate(
+    t = Transaction.objects.filter(section__id_section__contains='75', year__id_year__range=(12, 16), kind=1,
+                                   country=92).values_list('month', 'year').annotate(
         price=Sum('price'),
         weight=Sum(
             'weight')).order_by('kind', 'year', 'month')
@@ -156,6 +156,9 @@ def svr(request):
         else:
             predictDate.append(addMonth(predictDate[i - 1]))
     matplotlib.use('Agg')
+    
+    _2019 = [420, 2548, 205390, 155914, 262567, 259913 ]
+    plt.plot(predictDate, _2019, marker='o', color='#2DAB20')
     plt.plot(df.price, marker='o', markerfacecolor='blue', color='skyblue', linewidth=3)
     plt.plot(df.index, y_fit, color='blue')
     plt.plot(predictDate, y_test, marker='o', color='#2DAB20')
