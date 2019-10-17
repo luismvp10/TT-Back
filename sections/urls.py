@@ -6,5 +6,6 @@ from . import views
 urlpatterns = [
 
     url(r'section/(?P<pk>[0-9]+)$', views.SectionList.as_view()),
+    url(r'^addSection$', views.AddSection, name='add_section'),
 
 ]

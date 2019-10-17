@@ -1,8 +1,6 @@
 from rest_framework import generics
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-
-from chapters.models import Chapter
 from shipments.models import Shipment
 from shipments.serializers import ShipmentSerializer
 from shipments.forms import ShipmentForm
@@ -21,7 +19,7 @@ def AddShipment(request):
         shipment = Shipment.objects.filter(id_shipment=request.POST.get('id_shipment')).update(chapter=request.POST.get('id_chapter'))
     elif request.method == 'GET':
         print(request.GET)
-    return render(request, 'shipments/AddShipment.html', {"form":form})
+    return render(request, 'shipments/AddShipment.html', {"form": form})
 
 
 

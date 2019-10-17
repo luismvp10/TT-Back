@@ -12,14 +12,13 @@ from rest_framework.permissions import AllowAny
 @api_view(["GET", "POST"])
 @permission_classes((AllowAny,))
 def AddChapter(request):
-    model = Chapter
     form = ChapterForm()
     if request.method == 'POST':
         chapter = Chapter(id_chapter=request.POST.get('id_chapter'), name=request.POST.get('name'))
         chapter.save()
     elif request.method == 'GET':
         print(request.GET)
-    return render(request, 'chapters/AddChapter.html', {"form":form})
+    return render(request, 'chapters/AddChapter.html', {"form": form})
 
 
 

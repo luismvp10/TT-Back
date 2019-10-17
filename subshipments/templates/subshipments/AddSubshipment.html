@@ -12,34 +12,33 @@
 
 <body>
 <div class="container">
-<h1>Partida</h1>
+<h1>Subpartida</h1>
     <div class="row mt-5">
-
         <form method="POST" style="width: 80%">
             {% csrf_token %}
             <div class="form-group">
-                <label for="formGroupExampleInput">N°. de la Partida</label>
-                <input type="number" class="form-control" name="id_shipment" id="id_shipment"
-                       placeholder="N°. de la Partida" required >
+                <label for="formGroupExampleInput">N°. de la Subpartida</label>
+                <input type="number" class="form-control" name="id_subShipment" id="id_subShipment"
+                       placeholder="N°. de la Subpartida" required >
             </div>
 
             <div class="form-group">
-                <label for="formGroupExampleInput">Nombre de la Partida</label>
-                <input type="text" class="form-control" name="name" id="name" placeholder="Nombre de la Partida"
+                <label for="formGroupExampleInput">Nombre de la Subpartida</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Nombre de la Subpartida"
                        required>
             </div>
 
 
             <div class="form-group">
-                <label for="exampleFormControlSelect1">Capítulo</label>
-                <select class="form-control" id="id_chapter" name="id_chapter" value="0">
-                    {% for chapter in form.chapters %}
-                    <option>{{chapter.id_chapter}}</option>
+                <label for="exampleFormControlSelect1">Partida</label>
+                <select class="form-control" id="id_shipment" name="id_shipment" value="0">
+                    {% for shipment in form.shipments %}
+                    <option>{{shipment.id_shipment}}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary" value="addShipment">Guardar</button>
+            <button type="submit" class="btn btn-primary" value="addSubshipment">Guardar</button>
 
         </form>
 
