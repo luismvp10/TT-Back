@@ -1,5 +1,5 @@
 from django import forms
-from chapters.models import Chapter
+
 
 
 class ChapterForm(forms.Form):
