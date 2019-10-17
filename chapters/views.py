@@ -25,8 +25,20 @@ def AddChapter(request):
 # Create your views here.
 @permission_classes((AllowAny,))
 class ChapterList(generics.ListAPIView):
-    queryset = Chapter.objects.all();
+    queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
+
+
+
+# Create your views here.
+@permission_classes((AllowAny,))
+class ChapterSerch(generics.ListAPIView):
+    serializer_class = ChapterSerializer
+
+    def get_queryset(self):
+        name=self.kwargs['search']
+        return Chapter.objects.filter(name__contains=name)
+
 
 
 
