@@ -25,5 +25,9 @@ urlpatterns = [
         views.hello_world),
     url(
         r'prediction/operation/(?P<operation>\d+)((?:/country/(?P<country>\d+))?)/kind/(?P<kind>\d)$',
-        views.prediction)
+        views.prediction),
+    url(
+        r'report/(?P<operation>\d+)((?:/country/(?P<country>\d+))?)((?:/month/(?P<month>[\d+\s+]+))?)/year/('
+        r'?P<year>\d+)$',
+        views.getReport),
 ]

@@ -45,7 +45,6 @@ def upload(request):
             except IndexError:
                 return Response({'status': 'El archivo no cuenta con el formato correcto'},
                                 status=HTTP_200_OK)
-            #Transaction.objects.all().delete()
             y = Year.objects.get(name=year)
             try:
                 s = Section.objects.get(id_section=int(section))

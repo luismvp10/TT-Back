@@ -24,7 +24,7 @@ register_matplotlib_converters()
 
 
 def regresion_lineal(request):
-    t = Transaction.objects.filter(section__id_section__contains='75052101', year__id_year__range=(12, 16), kind=2,
+    t = Transaction.objects.filter(section__id_section__contains='75089099', year__id_year__range=(14, 16), kind=2,
                                    country=60).values_list('month', 'year').annotate(
         price=Sum('price'),
         weight=Sum(
@@ -32,7 +32,7 @@ def regresion_lineal(request):
     df = pd.DataFrame(list(t), columns=['month', 'year', 'price', 'weight'])
     df.year = df.year.replace([12, 13, 14, 15, 16], [2014, 2015, 2016, 2017, 2018])
     X = df.index
-    y = df.weight
+    y = df.price
     df['Date'] = pd.to_datetime([f'{y}-{m}-01' for y, m in zip(df.year, df.month)])
     df.set_index('Date', inplace=True)
     regressor = LinearRegression()
@@ -69,7 +69,7 @@ def regresion_lineal(request):
 
 
 def regresion_polinomial(request):
-    t = Transaction.objects.filter(section__id_section__contains='75052101', year__id_year__range=(12, 16), kind=2,
+    t = Transaction.objects.filter(section__id_section__contains='75089099', year__id_year__range=(12, 16), kind=2,
                                    country=60).values_list('month', 'year').annotate(
         price=Sum('price'),
         weight=Sum(
@@ -120,8 +120,8 @@ def regresion_polinomial(request):
 
 
 def svr(request):
-    t = Transaction.objects.filter(section__id_section__contains='75', year__id_year__range=(12, 16), kind=1,
-                                   country=92).values_list('month', 'year').annotate(
+    t = Transaction.objects.filter(section__id_section__contains='75089099', year__id_year__range=(12, 16), kind=2,
+                                   country=60).values_list('month', 'year').annotate(
         price=Sum('price'),
         weight=Sum(
             'weight')).order_by('kind', 'year', 'month')
@@ -158,7 +158,7 @@ def svr(request):
     matplotlib.use('Agg')
     
     _2019 = [420, 2548, 205390, 155914, 262567, 259913 ]
-    plt.plot(predictDate, _2019, marker='o', color='#2DAB20')
+    #plt.plot(predictDate, _2019, marker='o', color='#2DAB20')
     plt.plot(df.price, marker='o', markerfacecolor='blue', color='skyblue', linewidth=3)
     plt.plot(df.index, y_fit, color='blue')
     plt.plot(predictDate, y_test, marker='o', color='#2DAB20')
