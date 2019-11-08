@@ -276,7 +276,6 @@ def getReport(request, operation, country, month, year):
             months = []
             for temp in data:
                 months.append(temp)
-        print(months)
         if month is None and country is None:
             query = Transaction.objects.filter(section__id_section__contains=operation, year=year).values(
                 'country').annotate(Count('country'))

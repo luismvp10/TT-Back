@@ -78,12 +78,36 @@ def delete(request):
 def validateToken(request):
     try:
         token = request.data.get("token")
-        t = Token.objects.get(key=token);
+        t = Token.objects.get(key=token)
         return Response({'error': True},
                         status=HTTP_200_OK)
     except Token.DoesNotExist:
         return Response({'error': False},
                         status=HTTP_200_OK)
+
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes((AllowAny,))
+def modify(request):
+    email = request.data.get("email")
+    password = request.data.get("password")
+    names = request.data.get("names")
+    surname = request.data.get("surname")
+    if email is None or password is None:
+        return Response({'error': 'Please provide both email and password'},
+                        status=HTTP_400_BAD_REQUEST)
+    try:
+        user = User.objects.get(email=email)
+        user.set_password(password)
+        user.names = names
+        user.surname = surname
+        user.save()
+        return Response({'success': 'Usuario modificado correctamente'},
+                        status=HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({'error': 'El usuario no existe'},
+                        status=HTTP_400_BAD_REQUEST)
+
 
 @permission_classes((IsAllowedToWrite,))
 class UserList(generics.ListAPIView):
