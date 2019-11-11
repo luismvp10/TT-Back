@@ -33,7 +33,8 @@ def login(request):
     token, _ = Token.objects.get_or_create(user=user)
     return Response({'token': token.key,
                      'userType': user.user_type,
-                     'name': user.names + ' ' + user.surname},
+                     'name': user.names,
+                     'surname': user.surname},
                     status=HTTP_200_OK)
 
 
@@ -144,7 +145,7 @@ def send_email(request):
         send_mail(
             'SICAT: Modificar contraseña',
             'Para modificar su contraseña acceda al siguiente link http://localhost:4200/recover/' + new,
-            'apikey',
+            'Restablecer Contraseña - SICAT',
             [email],
             fail_silently=False,
         )
