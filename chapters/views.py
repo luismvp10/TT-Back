@@ -25,8 +25,9 @@ def AddChapter(request):
 # Create your views here.
 @permission_classes((AllowAny,))
 class ChapterList(generics.ListAPIView):
-    queryset = Chapter.objects.all()
+    queryset = Chapter.objects.order_by('id_chapter')
     serializer_class = ChapterSerializer
+
 
 
 
