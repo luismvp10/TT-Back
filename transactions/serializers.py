@@ -8,6 +8,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     #section = serializers.ReadOnlyField(source='section.name',allow_null=True)
     #year = serializers.ReadOnlyField(source='year.name',allow_null=True)
     #month = serializers.ReadOnlyField(source='month.name',allow_null=True)
+    month = serializers.IntegerField()
     class Meta:
         model = Transaction
         fields=('id_transaction', 'price', 'weight', 'year', 'month')
