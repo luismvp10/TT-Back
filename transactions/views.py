@@ -32,41 +32,11 @@ from reportlab.lib.pagesizes import landscape, letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from textwrap import wrap
+from django.http import HttpResponse
 
 plt.style.use('seaborn')
 register_matplotlib_converters()
 pageinfo = "platypus example"
-
-@permission_classes((AllowAny,))
-class TransactionList(generics.ListAPIView):
-    serializer_class = CustomSerializer
-
-    def get_queryset(self):
-        section = self.kwargs['section']
-        country = self.kwargs['country']
-        month = self.kwargs['month']
-        year = self.kwargs['year']
-        if month is not None:
-            data = month.split()
-            months = []
-            for temp in data:
-                months.append(temp)
-        if month is None and country is None:
-            query = Transaction.objects.filter(section=section, year=year).values('country').annotate(Count('country'))
-            return groupquery(query, section, year)
-        if month is None and country is not None:
-            query = Transaction.objects.filter(section=section, year=year, country=country).values('country').annotate(
-                Count('country'))
-            return groupquery(query, section, year)
-        if country is None and month is not None:
-            query = Transaction.objects.filter(section=section, year=year, month__in=months).values('country').annotate(
-                Count('country'))
-            return groupquery(query, section, year, month=months)
-        else:
-            query = Transaction.objects.filter(section=section, year=year, month__in=months, country=country).values(
-                'country').annotate(Count('country'))
-            return groupquery(query, section, year, month=months)
-
 
 @permission_classes((AllowAny,))
 class TransactionSubshipment(generics.ListAPIView):
@@ -98,41 +68,6 @@ class TransactionSubshipment(generics.ListAPIView):
             query = Transaction.objects.filter(section__id_section__contains=operation, year=year, month__in=months,
                                                country=country).values('country').annotate(Count('country'))
             return sumquery(query, operation, year, month=months)
-
-
-def groupquery(query, section, year, **kwargs):
-    month = kwargs.get('month')
-    result = []
-    for x in query:
-        c = Countrie.objects.get(id_country=x['country'])
-        if month is not None:
-            q = Transaction.objects.filter(section=section, year=year, country=x['country'], month__in=month,
-                                           kind=1).order_by('month')
-            imports = list(q)
-            q = Transaction.objects.filter(section=section, year=year, country=x['country'], month__in=month,
-                                           kind=2).order_by('month')
-            exports = list(q)
-        else:
-            q = Transaction.objects.filter(section=section, year=year, country=x['country'], kind=1).order_by('month')
-            imports = list(q)
-            q = Transaction.objects.filter(section=section, year=year, country=x['country'], kind=2).order_by('month')
-            exports = list(q)
-        result.append({'country': c.name, 'imports': imports, 'exports': exports})
-    for q in result:
-        tp = tw = 0
-        for x in q['imports']:
-            tp = tp + x['price']
-            tw = tw + x['weight']
-        if tp != 0 and tw != 0:
-            q['imports'].append({'month': 13, 'price': tp, 'weight': tw})
-        tp = tw = 0
-        for x in q['exports']:
-            tp = tp + x['price']
-            tw = tw + x['weight']
-        if tp != 0 and tw != 0:
-            q['exports'].append({'month': 13, 'price': tp, 'weight': tw})
-    return result
-
 
 def sumquery(query, operation, year, **kwargs):
     month = kwargs.get('month')
@@ -169,6 +104,7 @@ def sumquery(query, operation, year, **kwargs):
     for q in result:
         tp = tw = 0
         for x in q['imports']:
+
             tp = tp + x['price']
             tw = tw + x['weight']
         if len(q['imports']) != 0:
@@ -181,10 +117,6 @@ def sumquery(query, operation, year, **kwargs):
             q['exports'].append({'month': 13, 'price': tp, 'weight': tw})
     return result
 
-
-from django.http import HttpResponse
-
-
 def hello_world(request, month):
     data = month.split()  # split string into a list
     months = []
@@ -194,7 +126,6 @@ def hello_world(request, month):
         'month')
     print(query)
     return HttpResponse('Hola Mundo')
-
 
 def prediction(request, operation, kind, country):
     if country is None:
@@ -209,6 +140,13 @@ def prediction(request, operation, kind, country):
             price=Sum('price'),
             weight=Sum('weight')).order_by('kind', 'year', 'month')
     df = pd.DataFrame(list(t), columns=['month', 'year', 'price', 'weight'])
+
+    if len(t) < 36:
+        return Response(
+            {"detail": "This action is not authorized"},
+            content_type="blob",
+            status=HTTP_400_BAD_REQUEST
+        )
     df.year = df.year.replace([12, 13, 14, 15, 16], [2014, 2015, 2016, 2017, 2018])
     X = df.index
     y = df.price
@@ -255,14 +193,12 @@ def prediction(request, operation, kind, country):
         red.save(response, "JPEG")
         return response
 
-
 def addMonth(date):
     year, month = divmod(date.month + 1, 12)
     if month == 0:
         month = 12
         year = year - 1
     return datetime(date.year + year, month, 1)
-
 
 @csrf_exempt
 @api_view(["GET"])
